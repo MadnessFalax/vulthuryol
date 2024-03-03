@@ -11,77 +11,124 @@ namespace ConsoleApp1
     {
         private string input;
         private int position;
+        private char current;
 
         public Scanner(StreamReader file) 
         { 
             input = file.ReadToEnd();
+            position = -1;
+            nextChar(true);
         
         }
 
-        public Token nextToken()
+        public Token NextToken()
         {
-            if (position >=input.Length)
+            if (current == '\0')
             {
-                return new Token(TokenType.EOF, null);
+                return new Token(TokenType.EOF, "");
             }
 
-            char current = input[position];
-            if (char.IsWhiteSpace(current))
+            if (current == '(') 
             {
-                position++;
-                return nextToken();
+                nextChar(true);
+                return new Token(TokenType.LPAR, "");
             }
-            if (current == '(' || current == ')' || current == ';' || current == '+' || current == '-' || current == '*')
+            if (current == ')')
             {
-                position++;
-                if (current == '(') return new Token(TokenType.LPAR, null);
-                if (current == ')') return new Token(TokenType.RPAR, null);
-                if (current == ';') return new Token(TokenType.DEL, null);
-                if (current == '+') return new Token(TokenType.OP, "+");
-                if (current == '-') return new Token(TokenType.OP, "-");
-                if (current == '*') return new Token(TokenType.OP, "*");
+                nextChar(true);
+                return new Token(TokenType.RPAR, "");
+            }
+            if (current == ';')
+            {
+                nextChar(true);
+                return new Token(TokenType.DEL, "");
+            }
+            if (current == '+')
+            {
+                nextChar(true);
+                return new Token(TokenType.OP, "+");
+            }
+            if (current == '-')
+            {
+                nextChar(true);
+                return new Token(TokenType.OP, "-");
+            }
+            if (current == '*')
+            {
+                nextChar(true);
+                return new Token(TokenType.OP, "*");
+            }
 
-            }
             if(char.IsDigit(current)) 
             {
                 string text = "";
                 while(char.IsDigit(current)) 
                 {
                     text += current;
-                    position++;
+                    nextChar(true);
                 }
                 return new Token(TokenType.NUM, text);
             }
+
             if (char.IsLetter(current))
             {
                 string text = "";
+                
                 while (char.IsLetterOrDigit(current))
                 {
                     text += current;
-                    position++;
+                    nextChar(true);
+                    if (text == "mod")
+                    {
+                        return new Token(TokenType.MOD, "");
+                    }
+                    if (text == "div")
+                    {
+                        return new Token(TokenType.DIV, "");
+                    }
                 }
-                if (text == "mod")
-                {
-                    return new Token(TokenType.MOD, null);
-                }
-                if (text == "div")
-                {
-                    return new Token(TokenType.DIV, null);
-                }
-                else
-                {
-                    return new Token(TokenType.ID, text);
-                }
+
+                return new Token(TokenType.ID, text);
+                
             }
             if (current == '/')
             {
-                string text = "";
-                while (char.IsLetterOrDigit(current))
+                nextChar(true);
+                if (current == '/')
                 {
-                    text += current;
-                    position++;
+                    while(current != '\n')
+                    {
+                        nextChar(false);
+                    }
+                    nextChar(true);
+                    return new Token(TokenType.NOTE, "");
                 }
-                return new Token(TokenType.ID, text);
+                else
+                {
+                    return new Token(TokenType.OP, "/");
+                }
+                
+            }
+            else
+            {
+                return new Token(TokenType.INVALID, "");
+            }
+
+        }
+
+        private void nextChar(bool ignoreWhiteSpace)
+        {
+            position++;
+            if (position == input.Length)
+                current = '\0';       
+            else
+                current = input[position];
+            if (ignoreWhiteSpace)
+            {
+                if (char.IsWhiteSpace(current))
+                {
+                    nextChar(true);
+                }
             }
 
         }

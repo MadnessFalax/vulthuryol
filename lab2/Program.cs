@@ -6,15 +6,17 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            using var file = new StreamReader("test.txt");
+            using var file = new StreamReader("text.txt");
             var scanner = new Scanner(file);
 
             var token = scanner.NextToken();
             while(token.Type != TokenType.EOF) 
-            { 
-                Console.WriteLine(token);
+            {
+                token.printToken();
                 token = scanner.NextToken();
             }
+
+            return;
 
         }
     }
