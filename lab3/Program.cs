@@ -28,6 +28,7 @@ namespace Lab3
 				Console.WriteLine();
 
 				gr.PrintFirst();
+				gr.PrintFollow();
 			}
 			catch (GrammarException e)
 			{

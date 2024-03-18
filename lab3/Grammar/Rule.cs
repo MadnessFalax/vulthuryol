@@ -16,7 +16,7 @@ namespace Grammar
 
 		public IList<Symbol> RHS { get; } = new List<Symbol>();
 
-		public IList<Symbol> First { get; } = new List<Symbol>();
+		public IList<Terminal> First { get; } = new List<Terminal>();
 
 		public string RHS_toString()
 		{

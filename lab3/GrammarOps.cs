@@ -116,7 +116,8 @@ namespace Lab3
 					{
 						if (row != col && table[row, col])
 						{
-							Console.WriteLine("Addition triggered!");
+							// dev
+							//Console.WriteLine("Addition triggered!");
 							for (var index = g.Nonterminals.Count; index < g.Nonterminals.Count + g.Terminals.Count; index++)
 							{
 								if (table[col, index])
@@ -131,14 +132,6 @@ namespace Lab3
 				}
 			}
 
-			for (int i = 0; i < 3; i++)
-			{
-				for (int j = 0; j < 3; j++)
-				{
-					Console.WriteLine(table[i,j].ToString());
-				}
-			}
-
 			// result
 			foreach(var rule in g.Rules)
 			{
@@ -147,10 +140,10 @@ namespace Lab3
 					var index = 0;
 					while (index < rule.RHS.Count)
 					{
-						if (rule.RHS[index] is Terminal)
+						if (rule.RHS[index] is Terminal ter)
 						{
-							if (!rule.First.Contains(rule.RHS[index]))
-								rule.First.Add(rule.RHS[index]);
+							if (!rule.First.Contains(ter))
+								rule.First.Add(ter);
 							break;
 						}
 						else if (rule.RHS[index] is Nonterminal nt) 
@@ -182,6 +175,15 @@ namespace Lab3
 				}
 
 			}
+
+			foreach(var rule in g.Rules)
+			{
+				foreach(var first in rule.First)
+				{
+					if (!rule.LHS.First.Contains(first) && first.Name != "{e}")
+						rule.LHS.First.Add(first);
+				}
+			}
 		}
 
 		public void PrintFirst()
@@ -194,15 +196,120 @@ namespace Lab3
 
 		private void compute_follow()
 		{
-			foreach(var nonterminal in g.Nonterminals)
+			var epsilon_col = g.Nonterminals.Count + g.Terminals.Count;
+			var nt_offset = g.Nonterminals.Count;
+
+            bool[,] table = new bool[nt_offset, g.Nonterminals.Count + g.Terminals.Count + 1];
+
+
+			table[g.Nonterminals.IndexOf(g.StartingNonterminal), epsilon_col] = true;
+
+            foreach (var rule in g.Rules)
 			{
-				
+				for (int i = 0; i < rule.RHS.Count; i++)
+				{
+					var current = rule.RHS[i];
+					
+					if (current is Nonterminal cast_current)
+					{
+						if (i != rule.RHS.Count - 1)
+						{
+							int next_index = i + 1;
+
+							while(next_index < rule.RHS.Count)
+							{
+								var next = rule.RHS[next_index];
+								
+								if (next is Nonterminal cast_next_nt)
+								{
+									foreach (var terminal in cast_next_nt.First)
+									{
+										table[g.Nonterminals.IndexOf(cast_current), g.Terminals.IndexOf(terminal) + nt_offset] = true;
+									}
+
+									if (!EmptyNonterminals.Contains(cast_next_nt))
+									{
+										break;
+									}
+								}
+								else if (next is Terminal cast_next)
+								{
+									table[g.Nonterminals.IndexOf(cast_current), g.Terminals.IndexOf(cast_next) + nt_offset] = true;
+									break;
+								}
+
+								next_index++;
+							}							
+						}
+						else
+						{
+							table[g.Nonterminals.IndexOf(cast_current), g.Nonterminals.IndexOf(rule.LHS)] = true;
+						}
+					}
+				}
 			}
-		}
+
+			var changed = true;
+
+			while (changed)
+			{
+				changed = false;
+
+				for (int row = 0; row < nt_offset; row++)
+				{
+					for (int col = 0; col < nt_offset; col++)
+					{
+						if (table[row, col] && row != col)
+						{
+                            for (var index = nt_offset; index < epsilon_col + 1 /* includes epsilon */; index++)
+                            {
+                                if (table[col, index])
+                                {
+                                    if (table[col, index] != table[row, index])
+                                        changed = true;
+                                    table[row, index] = true;
+                                }
+                            }
+                        }
+					}
+				}
+			}
+
+			Terminal endline = new Terminal("$");
+
+			for (int row = 0; row < nt_offset; row++)
+			{
+				var current_nt = g.Nonterminals[row];
+
+				for (int col = nt_offset; col < epsilon_col; col++)
+				{
+					var current_t = g.Terminals[col - nt_offset];
+
+					if (table[row, col])
+					{
+						if (!current_nt.Follow.Contains(current_t))
+						{
+							current_nt.Follow.Add(current_t);
+						}
+					}
+				}
+
+				if (table[row, epsilon_col])
+				{
+                    if (!current_nt.Follow.Contains(endline))
+                    {
+                        current_nt.Follow.Add(endline);
+                    }
+                }
+			}
+        }
 
 		public void PrintFollow()
 		{
-
+			foreach(var nt in g.Nonterminals)
+			{
+				Console.WriteLine($"follow[{nt.Name}] = {nt.Follow_toString()}");
+			}
 		}
 
 
