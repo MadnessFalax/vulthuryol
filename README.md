@@ -1,4 +1,4 @@
-# PJP
+# PLC
 This repository is dedicated to Programming Languages and Compilers course at Technical University of Ostrava. Each laboratory exercise can be found in corresponding folder i.e. Laboratory 1 task solution can be found in lab1 folder. The semestral project is stored in it's own folder.
 
 ## Compiler
