@@ -13,6 +13,8 @@ namespace Grammar
 		{
 			GrammarImpl grammar = new GrammarImpl();
 
+			grammar.Epsilon = new Terminal("{e}");
+
 			ch = inp.Read();
 			int sym = GetSymbol();
 

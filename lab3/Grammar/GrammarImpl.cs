@@ -7,6 +7,9 @@ namespace Grammar
 {
 	public class GrammarImpl : IGrammar
 	{
+		public Terminal Epsilon { get; set; }
+
+        public bool LL1 { get; set; }
 
         public IList<Terminal> Terminals { get; } = new List<Terminal>();
 		public Terminal? AddTerminal(string name)

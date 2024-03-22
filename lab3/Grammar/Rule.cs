@@ -27,10 +27,10 @@ namespace Grammar
 				sb.Append($"{sym.Name}");
 			}
 
-			if (RHS.Count == 0) 
-			{
-				sb.Append("{e}");
-			}
+			//if (RHS.Count == 0) 
+			//{
+			//	sb.Append("{e}");
+			//}
 
 			return sb.ToString();
 		}

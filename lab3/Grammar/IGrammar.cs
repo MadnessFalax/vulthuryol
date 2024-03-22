@@ -6,10 +6,12 @@ namespace Grammar
 {
     public interface IGrammar
     {
+        bool LL1 { get; set; } 
         IList<Nonterminal> Nonterminals { get; }
-
         IList<Terminal> Terminals { get; }
         IList<Rule> Rules { get; }
+
+        Terminal Epsilon { get; }
 
         Nonterminal? StartingNonterminal { get;  }
 

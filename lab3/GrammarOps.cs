@@ -11,6 +11,7 @@ namespace Lab3
 			compute_empty();
 			compute_first();
 			compute_follow();
+			CheckLL1();
 		}
 
 		public ISet<Nonterminal> EmptyNonterminals { get; } = new HashSet<Nonterminal>();
@@ -166,22 +167,30 @@ namespace Lab3
 					}
 					if (rule.RHS.All(x => EmptyNonterminals.Contains(x)))
 					{
-						rule.First.Add(new Terminal("{e}"));
+						rule.First.Add(g.Epsilon);
 					}
 				}
 				else
 				{
-					rule.First.Add(new Terminal("{e}"));
+					rule.First.Add(g.Epsilon);
 				}
 
 			}
 
-			foreach(var rule in g.Rules)
+			foreach (var rule in g.Rules)
 			{
-				foreach(var first in rule.First)
+				foreach (var first in rule.First)
 				{
-					if (!rule.LHS.First.Contains(first) && first.Name != "{e}")
+					if (!rule.LHS.First.Contains(first) && first != g.Epsilon)
 						rule.LHS.First.Add(first);
+				}
+			}
+
+			foreach (var rule in g.Rules)
+			{
+				if (rule.First.Count == 0)
+				{
+					rule.First.Add(g.Epsilon);
 				}
 			}
 		}
@@ -309,6 +318,86 @@ namespace Lab3
 			foreach(var nt in g.Nonterminals)
 			{
 				Console.WriteLine($"follow[{nt.Name}] = {nt.Follow_toString()}");
+			}
+		}
+
+		private void CheckLL1()
+		{
+			IList<Terminal>[] per_nonterminal = new List<Terminal>[g.Nonterminals.Count];
+			for(int i = 0; i <  g.Nonterminals.Count; i++)
+			{
+				per_nonterminal[i] = new List<Terminal>();
+			}
+
+			foreach(var rule in g.Rules)
+			{
+				var row = g.Nonterminals.IndexOf(rule.LHS);
+				foreach (Terminal terminal in rule.First)
+				{
+					if (per_nonterminal[row].Contains(terminal))
+					{
+						g.LL1 = false;
+						Console.WriteLine("Not LL1 due to First-First rule.");
+						return;
+					}
+					else
+					{
+						per_nonterminal[row].Add(terminal);
+					}
+				}
+			}
+
+			per_nonterminal.Initialize();
+
+			foreach(var rule in g.Rules)
+            {
+                var row = g.Nonterminals.IndexOf(rule.LHS);
+				if (rule.RHS.Contains(g.Epsilon))
+				{
+                    foreach (Terminal terminal in rule.LHS.Follow)
+                    {
+                        if (per_nonterminal[row].Contains(terminal))
+                        {
+                            g.LL1 = false;
+							Console.WriteLine("Not LL1 due to First-Follow rule.");
+                            return;
+                        }
+                        else
+                        {
+                            per_nonterminal[row].Add(terminal);
+                        }
+                    }
+                }
+				else
+				{
+                    foreach (Terminal terminal in rule.First)
+                    {
+                        if (per_nonterminal[row].Contains(terminal))
+                        {
+                            g.LL1 = false;
+                            Console.WriteLine("Not LL1 due to First-Follow rule.");
+                            return;
+                        }
+                        else
+                        {
+                            per_nonterminal[row].Add(terminal);
+                        }
+                    }
+                }
+            }
+
+			g.LL1 = true;
+		}
+
+		public void PrintLL1()
+		{
+			if (g.LL1)
+			{
+				Console.WriteLine("It is LL1 grammar");
+            }
+			else
+			{
+                Console.WriteLine($"It is not LL1 grammar");
 			}
 		}
 
