@@ -18,7 +18,7 @@ namespace Lab5
                 }
                 else
                 {
-                    Console.WriteLine(parser.RulesToString());
+                    Console.WriteLine(parser.Result);
                 }
             }
 

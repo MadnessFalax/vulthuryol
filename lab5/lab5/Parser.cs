@@ -11,6 +11,7 @@ namespace Lab5
         private Scanner scanner;
         private Token token;
         private ICollection<int> rules = new List<int>();
+        private int result = 0;
 
         public string RulesToString()
         {
@@ -23,11 +24,13 @@ namespace Lab5
             return sb.ToString(); 
         }
 
+        public int Result { get { return result; } }
+
         public Parser(Scanner scanner)
         {
             this.scanner = scanner;
             this.token = scanner.NextToken();
-            E();
+            result = E_interpret();
         }
 
         public bool error { get; set; }
@@ -132,6 +135,105 @@ namespace Lab5
             {
                 error = true;
             }
+
+        }
+
+        private int E_interpret()
+        {
+            rules.Add(1);
+            int multiplications_result = T_interpret();
+            return E1_interpret(multiplications_result);
+        }
+        private int E1_interpret(int LHS)
+        {
+            int result = LHS;
+            int RHS = 0;
+
+            if (token.Type == TokenType.PLUS)
+            {
+                Expect(TokenType.PLUS);
+                RHS = T_interpret();
+                return E1_interpret(LHS + RHS);
+            }
+            else if (token.Type == TokenType.MINUS)
+            {
+                Expect(TokenType.MINUS);
+                RHS = T_interpret();
+                return E1_interpret(LHS - RHS);
+            }
+            else if (token.Type == TokenType.EOL || token.Type == TokenType.RightPAR)
+            {
+                return result;
+            }
+            else
+            {
+                error = true;
+                return 0;
+            }
+        }
+
+        private int T_interpret()
+        {
+            int tmp = 0;
+            tmp = F_interpret();
+            token = scanner.NextToken();
+            return T1_interpret(tmp);
+        }
+
+        private int T1_interpret(int LHS)
+        {
+            int result = LHS;
+            int RHS = 0;
+            if (token.Type == TokenType.MUL)
+            {
+                Expect(TokenType.MUL);
+                RHS = F_interpret();
+                return T1_interpret(LHS * RHS);
+            }
+            else if (token.Type == TokenType.DIV)
+            {
+                Expect(TokenType.DIV);
+                RHS = F_interpret();
+                if (RHS == 0)
+                {
+                    error = true;
+                    return 0;
+                }
+                return T1_interpret(LHS * RHS);
+            }
+            else if (token.Type == TokenType.EOL || token.Type == TokenType.RightPAR || token.Type == TokenType.PLUS || token.Type == TokenType.MINUS)
+            {
+                return result;
+            }
+            else
+            {
+                error = true;
+                return 0;
+            }
+
+        }
+
+        private int F_interpret()
+        {
+            int result = 0;
+
+            if (token.Type == TokenType.LeftPAR)
+            {
+                Expect(TokenType.LeftPAR);
+                result = E_interpret();
+                Expect(TokenType.RightPAR);
+            }
+            else if (token.Type == TokenType.NUMBER)
+            {
+                var value = int.Parse(token.Value);
+                result = value;
+            }
+            else
+            {
+                error = true;
+            }
+
+            return result;
 
         }
     }
