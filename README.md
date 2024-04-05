@@ -8,4 +8,4 @@ Project description can be found at http://behalek.cs.vsb.cz/wiki/index.php/PLC_
 Programmes have been writen using Visual Studio 2022, thus MSVC 14.3 compiler has been used for debugging purposes.
 
 ## Input Files
-Input .txt files are taken from snippets as seen on http://behalek.cs.vsb.cz/wiki/index.php/Programming_Languages_and_Compilers#Laboratories so they can be easily redirected when launching built programme.
+Input .txt files are taken from snippets as seen on http://behalek.cs.vsb.cz/wiki/index.php/Programming_Languages_and_Compilers#Laboratories so they can be easily redirected when launching built programme. In later laboratories they are no longer being redirected into standard input and read from CLI, instead they are loaded directly as files.
