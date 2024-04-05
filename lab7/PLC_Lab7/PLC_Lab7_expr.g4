@@ -3,44 +3,96 @@ grammar PLC_Lab7_expr;
 /** The start rule; begin parsing here. */
 prog: (statement)+ ;
 
-statement: ';'
-    | TYPE ID (',' ID)* ';'
-    | expr ';'
-    | 'read' ID (',' ID)* ';'
-    | 'write' expr (',' expr)* ';'
-    | '{' statement (statement)* '}'
-    | 'if' '(' condition ')' statement ('else' statement)?
-    | 'while' '(' condition ')' statement
+statement: ';'                                                  # EmptyStatement
+    | type_kw ID (',' ID)* ';'                                  # Declaration
+    | expr ';'                                                  # Expression
+    | 'read' ID (',' ID)* ';'                                   # ReadCLI
+    | 'write' expr (',' expr)* ';'                              # WriteCLI
+    | '{' statement (statement)* '}'                            # CodeBlock
+    | 'if' '(' condition ')' statement ('else' statement)?      # IfStatement
+    | 'while' '(' condition ')' statement                       # WhileStatement
     ;
 
-condition: expr
+condition: expr                                                 # ConditionalExpr
     ;
 
-expr: unnary_expr
-    | leaf operation?
-    | assignment_expr
-    | '(' expr ')'
+expr: assignment_expr ;
+
+unnary_expr: UN_MIN_OP expr                                     # UnaryMinus
+    | NEG_OP expr                                               # UnaryNeg
     ;
 
-unnary_expr: UN_MIN_OP expr
-    | NEG_OP expr
+assignment_expr: ID ASS_OP assignment_expr                      # NestedAss
+    | assignment_leaf                                           # LeavingAss
     ;
 
-assignment_expr: ID ASS_OP expr ;
-
-operation: MUL_OP expr
-    | ADD_OP expr
-    | REL_OP expr
-    | COMP_OP expr
-    | AND_OP expr
-    | OR_OP expr
+assignment_leaf: leaf_common                                    # AssTerminal
+    | or_expr                                                   # AssToOr
     ;
 
-leaf: ID
-    | INT
-    | BOOL
-    | FLOAT
-    | STRING
+or_expr: or_expr OR_OP or_leaf                                  # NestedOr
+    | or_leaf                                                   # LeavingOr
+    ;
+
+or_leaf: leaf_common                                            # OrTerminal
+    | and_expr                                                  # OrToAnd
+    ;
+
+and_expr: and_expr AND_OP and_leaf                              # NestedAnd
+    | and_leaf                                                  # LeavingAnd
+    ;
+
+and_leaf: leaf_common                                           # AndTerminal
+    | comp_expr                                                 # AndToComp
+    ;
+
+comp_expr: comp_expr op=(EQ_OP|NOT_EQ_OP) comp_leaf             # NestedComp
+    | comp_leaf                                                 # LeavingComp
+    ;
+
+comp_leaf: leaf_common                                          # CompTerminal
+    | rel_expr                                                  # CompToRel
+    ;
+
+rel_expr: rel_expr op=(HIGH_OP|LOW_OP) rel_leaf                 # NestedRel
+    | rel_leaf                                                  # LeavingRel
+    ;
+
+rel_leaf: leaf_common                                           # RelTerminal
+    | add_expr                                                  # RelToAdd
+    ;
+
+add_expr: add_expr op=(ADD_OP|MIN_OP|CONCAT_OP) add_leaf        # NestedAdd
+    | add_leaf                                                  # LeavingAdd
+    ;
+
+add_leaf: leaf_common                                           # AddTerminal
+    | mul_expr                                                  # AddToMul
+    ;
+
+mul_expr: mul_expr op=(MUL_OP|DIV_OP|MOD_OP) mul_leaf           # NestedMul
+    | mul_leaf                                                  # LeavingMul
+    ;
+
+mul_leaf : leaf_common                                          # MulTerminal
+    ;          
+    
+leaf_common : leaf                                              # CommonLeaf
+    | '(' expr ')'                                              # CommonParent
+    | unnary_expr                                               # CommonUnnary
+    ;
+
+leaf: INT                               # Int
+    | BOOL                              # Bool
+    | FLOAT                             # Float
+    | STRING                            # String
+    | ID                                # Id
+    ;
+
+type_kw: type=INT_KW
+    | type=FLOAT_KW
+    | type=BOOL_KW
+    | type=STRING_KW
     ;
 
 // Lexer
@@ -48,14 +100,25 @@ leaf: ID
 ASS_OP : '=' ;
 UN_MIN_OP : '-' ;
 NEG_OP : '!' ;
-MUL_OP : '*' | '/' | '%' ;
-ADD_OP : '+' | '-' | '.' ;
-REL_OP : '<' | '>' ;
-COMP_OP : '!=' | '==' ;
+MUL_OP : '*' ;
+DIV_OP : '/' ;
+MOD_OP : '%' ;
+ADD_OP : '+' ;
+MIN_OP : '-' ;
+CONCAT_OP: '.' ;
+LOW_OP : '<' ;
+HIGH_OP : '>' ;
+NOT_EQ_OP : '!=' ;
+EQ_OP : '==' ;
 AND_OP : '&&' ;
 OR_OP : '||' ;
 
-TYPE : 'int'|'float'|'bool'|'string' ;
+// types keywords
+INT_KW: 'int' ;
+FLOAT_KW: 'float' ;
+BOOL_KW: 'bool' ;
+STRING_KW: 'string' ;
+
 ID : [a-zA-Z][a-zA-Z0-9_]* ;        // match identifiers
 INT : [1-9][0-9]*|'0' ;          // match integers
 BOOL : 'true'|'false' ;          // match bool

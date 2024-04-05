@@ -33,6 +33,8 @@ namespace PLC_Lab7
                 walker.Walk(new EvalListener(), tree);
 
                 new EvalVisitor().Visit(tree);
+
+                Errors.PrintAndClearErrors();
             }
         }
     }

@@ -11,6 +11,7 @@ namespace PLC_Lab7
     public class EvalListener : PLC_Lab7_exprBaseListener
     {
         ParseTreeProperty<int> values = new ParseTreeProperty<int>();
+        
         /*
         public override void ExitInt([NotNull] PLC_Lab7_exprParser.IntContext context)
         {
