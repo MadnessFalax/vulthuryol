@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -6,14 +6,28 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Remove="input.txt" />
+    <None Remove="input2.txt" />
+    <None Remove="input3.txt" />
+    <None Remove="input4.txt" />
+    <None Remove="wrong_input.txt" />
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bin\Debug\net6.0\input2.txt" />
     <Content Include="bin\Debug\net6.0\input3.txt" />
     <Content Include="bin\Debug\net6.0\input4.txt" />
     <Content Include="bin\Debug\net6.0\wrong_input.txt" />
+    <Content Include="input2.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="input3.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="input4.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wrong_input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -26,6 +40,12 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Antlr4.Runtime" Version="4.6.6" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="input.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 
 </Project>
