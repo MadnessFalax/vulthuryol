@@ -9,14 +9,12 @@ statement: ';'                                                  # EmptyStatement
     | 'read' ID (',' ID)* ';'                                   # ReadCLI
     | 'write' expr (',' expr)* ';'                              # WriteCLI
     | '{' statement (statement)* '}'                            # CodeBlock
-    | 'if' '(' condition ')' statement ('else' statement)?      # IfStatement
-    | 'while' '(' condition ')' statement                       # WhileStatement
+    | 'if' '(' expr ')' statement ('else' statement)?           # IfStatement
+    | 'while' '(' expr ')' statement                            # WhileStatement
     ;
 
-condition: expr                                                 # ConditionalExpr
+expr: assignment_expr                                           # AssignmentLevel
     ;
-
-expr: assignment_expr ;
 
 unnary_expr: UN_MIN_OP expr                                     # UnaryMinus
     | NEG_OP expr                                               # UnaryNeg
@@ -125,3 +123,4 @@ BOOL : 'true'|'false' ;          // match bool
 FLOAT : [1-9][0-9]*'.'[0-9]* ;  // match float
 STRING : '"'[a-zA-Z0-9_.+/*,'@&%=(!){[\]};<>: -]*'"' ; // match string
 WS : [ \t\r\n]+ -> skip ;   // toss out whitespace
+COMMENT : '//'.*?'\n' -> skip;

@@ -1,0 +1,172 @@
+PUSH S "<Constants>"
+PRINT 1
+PUSH S "10: "
+PUSH I 10
+PRINT 2
+PUSH S " 1.25: "
+PUSH F 1.25
+PRINT 2
+PUSH S ""
+PRINT 1
+PUSH S "<Variables>"
+PRINT 1
+PUSH S ""
+SAVE s
+PUSH S "Abcd"
+SAVE s
+LOAD s
+POP
+PUSH S "s(Abcd): "
+LOAD s
+PRINT 2
+PUSH F 0
+SAVE d
+PUSH F 3.141592
+SAVE d
+LOAD d
+POP
+PUSH S "d(3.141592): "
+LOAD d
+PRINT 2
+PUSH I 0
+SAVE n
+PUSH I 500
+UMINUS
+SAVE n
+LOAD n
+POP
+PUSH S "n(-500): "
+LOAD n
+PRINT 2
+PUSH S ""
+PRINT 1
+PUSH B FALSE
+SAVE boolean
+PUSH B TRUE
+SAVE boolean
+LOAD boolean
+POP
+PUSH S "boolean(true): "
+LOAD boolean
+PRINT 2
+PUSH S ""
+PRINT 1
+PUSH S "<Expressions>"
+PRINT 1
+PUSH S "2+3*5(17): "
+PUSH I 2
+PUSH I 3
+PUSH I 5
+MUL
+ADD
+PRINT 2
+PUSH S "17 / 3(5): "
+PUSH I 17
+PUSH I 3
+DIV
+PRINT 2
+PUSH S "17 % 3(2): "
+PUSH I 17
+PUSH I 3
+MOD
+PRINT 2
+PUSH S "2.5*2.5/6.25(1.0): "
+PUSH F 2.5
+PUSH F 2.5
+MUL
+PUSH F 6.25
+DIV
+PRINT 2
+PUSH S "1.5*3(4.5): "
+PUSH F 1.5
+PUSH I 3
+ITOF
+MUL
+PRINT 2
+PUSH S "abc+def (abcdef): "
+PUSH S "abc"
+PUSH S "def"
+CONCAT
+PRINT 2
+PUSH S ""
+PRINT 1
+PUSH S "<Comments>"
+PRINT 1
+PUSH S "<Automatic int conversion>"
+PRINT 1
+PUSH F 0
+SAVE y
+PUSH I 10
+ITOF
+SAVE y
+LOAD y
+POP
+PUSH S "y (10.0): "
+LOAD y
+PRINT 2
+PUSH S "<Multiple Assignments>"
+PRINT 1
+PUSH I 0
+SAVE i
+PUSH I 0
+SAVE j
+PUSH I 0
+SAVE k
+PUSH I 55
+SAVE k
+LOAD k
+SAVE j
+LOAD j
+SAVE i
+LOAD i
+POP
+PUSH S "i=j=k=55: "
+LOAD i
+PUSH S "="
+LOAD j
+PUSH S "="
+LOAD k
+PRINT 6
+PUSH S "<Input - a(int),b(float),c(string),d(bool)>"
+PRINT 1
+PUSH I 0
+SAVE a
+PUSH F 0
+SAVE b
+PUSH S ""
+SAVE c
+PUSH B FALSE
+SAVE e
+PUSH I 0
+SAVE a
+LOAD a
+POP
+PUSH F 0.0
+SAVE b
+LOAD b
+POP
+PUSH S ""
+SAVE c
+LOAD c
+POP
+PUSH B TRUE
+SAVE e
+LOAD e
+POP
+READ I
+SAVE a
+READ F
+SAVE b
+READ S
+SAVE c
+READ B
+SAVE e
+PUSH S "a,b,c,e: "
+LOAD a
+PUSH S ","
+LOAD b
+PUSH S ","
+LOAD c
+PUSH S ","
+LOAD e
+PRINT 8

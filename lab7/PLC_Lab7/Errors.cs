@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace PLC_Lab7
@@ -15,13 +16,23 @@ namespace PLC_Lab7
             ErrorsData.Add($"{token.Line}:{token.Column} - {message}");
         }
         public static int NumberOfErrors { get { return ErrorsData.Count; } }
-        public static void PrintAndClearErrors()
+        public static void PrintErrors()
         {
             foreach (var error in ErrorsData)
             {
                 Console.WriteLine(error);
             }
+            //ErrorsData.Clear();
+        }
+
+        public static void Clear()
+        {
             ErrorsData.Clear();
+        }
+
+        public static int Count()
+        {
+            return ErrorsData.Count();
         }
     }
 }

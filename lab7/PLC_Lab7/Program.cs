@@ -14,7 +14,7 @@ namespace PLC_Lab7
         public static void Main(string[] args)
         {
             Thread.CurrentThread.CurrentCulture = new CultureInfo("en-US");
-            var fileName = "wrong_input.txt";
+            var fileName = "input2.txt";
             Console.WriteLine("Parsing: " + fileName);
             var inputFile = new StreamReader(fileName);
             AntlrInputStream input = new AntlrInputStream(inputFile);
@@ -29,12 +29,18 @@ namespace PLC_Lab7
             if (parser.NumberOfSyntaxErrors == 0)
             {
                 //Console.WriteLine(tree.ToStringTree(parser));
-                ParseTreeWalker walker = new ParseTreeWalker();
-                walker.Walk(new EvalListener(), tree);
+                //ParseTreeWalker walker = new ParseTreeWalker();
+                //walker.Walk(new EvalListener(), tree);
 
-                new EvalVisitor().Visit(tree);
+                var result = new EvalVisitor().Visit(tree);
+                Errors.PrintErrors();
 
-                Errors.PrintAndClearErrors();
+                if (Errors.Count() == 0)
+                {   
+                    Console.WriteLine(result.Instruction);
+                    using var sw = new StreamWriter("../../../target-code.txt", false);
+                    sw.WriteAsync(result.Instruction);
+                }
             }
         }
     }

@@ -1,0 +1,30 @@
+
+(while x y)
+
+normal stack
+normal stack
+.
+.
+.
+normal stack
+
+
+label pre_condition
+condition
+jmp question 
+label triggered
+pop
+repeating_code
+jmp pre_condition
+label question
+fjmp continue
+jmp triggered
+label continue
+pop
+
+normal stack
+normal stack
+.
+.
+.
+normal stack

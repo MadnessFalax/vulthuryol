@@ -1,0 +1,33 @@
+
+(if x then y else z forward)
+(if x then y forward)
+
+normal stack
+normal stack
+.
+.
+.
+normal stack
+
+
+
+condition
+jmp question 
+label triggered
+pop
+if_code
+jmp continue
+label question
+fjmp else_triggered
+jmp triggered
+label else_triggered
+pop
+else_code
+label continue
+
+normal stack
+normal stack
+.
+.
+.
+normal stack
